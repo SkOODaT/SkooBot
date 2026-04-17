@@ -1,0 +1,2 @@
+pythonnet==3.0.5
+discord.py>=2.7.1

@@ -1,0 +1,4 @@
+[Discord]
+token = 				BOT_TOKEN_HERE
+channel_id = 			CHANNEL_ID_HERE
+role_id = 				ROLE_ID_HERE
