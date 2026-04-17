@@ -168,14 +168,12 @@ def main(patterns):
         return
     ok = bad = 0
     for path in files:
-        print(path)
         try:
             ctarget = str
             for t in targets:
                 index = path.find(t)
                 if index != -1:
                     ctarget = t
-            #print(ctarget)
             pk = load_pk(ctarget, path)
             summary = summarise_pk(ctarget, pk)
             legality = check_legality(pk)
