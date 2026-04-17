@@ -2,3 +2,5 @@
 token = 				BOT_TOKEN_HERE
 channel_id = 			CHANNEL_ID_HERE
 role_id = 				ROLE_ID_HERE
+pokemon_image_url =		https://raw.githubusercontent.com/nileplumb/PkmnShuffleMap/master/UICONS/pokemon/
+pokemon_image_type = 	.png
