@@ -12,6 +12,7 @@ logging.basicConfig(
     format = f'[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] %(message)s',
     level = logging.INFO
 )
+console_info = False
 
 # Intents are required to tell Discord what events your bot wants to receive.
 intents = discord.Intents.default()
@@ -72,6 +73,7 @@ targets = [
     'pk9'
 ]
 
+
 @bot.event
 async def on_ready():
     logging.info(f'Logged in as {bot.user} (ID: {bot.user.id})')
@@ -125,17 +127,6 @@ async def on_message(message):
             else:
                 await message.channel.send(':x: Pokemon is **ILLEGAL**')
 
-            flag = False
-            info = ''
-            for ident, Valid, judgement, Result in legality['checks']:
-                if judgement != 'Valid':
-                    flag = True
-                    info += f'[{ident}] {judgement} {Result}\n'
-            if flag == True:
-                console_output(f'\n⚠ Legality issues: {loadfile}')
-                console_output(info)
-                await discord_alert_legality(info, loadfile, summary, message)       
-
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
@@ -147,10 +138,11 @@ async def on_command_error(ctx, error):
         logging.info(f'Unhandled error: {error}')
 
 async def discord_alert_pokemon(loadfile: str, summary: dict, legality: dict, message: str):
+    # 1. Set the initial embed
+    discord_colour = discord.Color.green()
     s = summary
     iv = s['ivs'];  ev = s['evs']
     status = '✅ LEGAL' if legality['valid'] else '❌ ILLEGAL'
-    # 1. Set the initial embed
     string = (
         f'{status}  {loadfile}\n'
         f'Nickname  : {s['nickname']}\n'
@@ -167,32 +159,34 @@ async def discord_alert_pokemon(loadfile: str, summary: dict, legality: dict, me
         f'Moves     : {' / '.join(m for m in s['moves'] if m)}\n'
         f'Pokerus   : State {s['pokerus_state']} Days {s['pokerus_days']} Strain {s['pokerus_strain']}' 
     )
+
+    if not legality['valid']:
+        flag = False
+        info = ''
+        for ident, Valid, judgement, Result in legality['checks']:
+            if judgement != 'Valid':
+                flag = True
+                info += f'[{ident}] {judgement} {Result}\n'
+        if flag == True:
+            console_output(f'\n⚠ **Legality issues:** {loadfile}')
+            console_output(info)
+            string += (
+                f'\n\n:warning: Legality Issues:'
+                #f'\nLegality  : {legality['valid']}'
+                f'\n{info}'
+            )
+            discord_colour = discord.Color.red()    
+
     embed = discord.Embed(
         title = f'\n  :parking:  Pokemon Summery: {loadfile}',
         description = string,
-        color = discord.Color.green()
+        color = discord_colour
     )
     # 2. Add content fields
     #embed.add_field(name = 'Member Count', value=message.guild.member_count, inline=True)
     #embed.add_field(name = 'Owner', value=message.guild.owner, inline=True)
     image_url = config['Discord']['pokemon_image_url'] + f'{summary['species']}' + config['Discord']['pokemon_image_type']
     # 3. Set visual elements
-    embed.set_footer(text = 'Requested by ' + message.author.name)
-    embed.set_thumbnail(url = image_url if image_url else None)
-    await message.channel.send(embed=embed)
-
-async def discord_alert_legality(info: str, loadfile: str, summary: dict, message: str):
-    # 1. Set the initial embed
-    embed = discord.Embed(
-        title = f'\n  :warning:  Legality Issues: {loadfile}',
-        description = info,
-        color = discord.Color.red()
-    )
-    # 2. Add content fields
-    #embed.add_field(name='Member Count', value=message.guild.member_count, inline=True)
-    #embed.add_field(name='Owner', value=message.guild.owner, inline=True)
-    # 3. Set visual elements
-    image_url = config['Discord']['pokemon_image_url'] + f'{summary['species']}' + config['Discord']['pokemon_image_type']
     embed.set_footer(text = 'Requested by ' + message.author.name)
     embed.set_thumbnail(url = image_url if image_url else None)
     await message.channel.send(embed=embed)
@@ -315,9 +309,10 @@ def print_result(ctarget: str, path: str, summary: dict, legality: dict):
         print(info, end='')
 
 def console_output(output: str):
-    try:
-        print(output)
-    except Exception as e:
-        logging.info(f'\n  ERROR {e}') 
+    if console_info == True:
+        try:
+            print(output)
+        except Exception as e:
+            logging.info(f'\n  ERROR {e}') 
 
 bot.run(config['Discord']['token'])
