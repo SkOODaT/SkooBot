@@ -116,20 +116,6 @@ versions = {
     'CP':       'Pokémon Champions (NX)'
 }
 
-class SBBDevice:
-    def __init__(self, host: str):
-        self.client = SBBClient(host)
-
-    async def get_title_id(self) -> str:
-        """Get the title ID of the sys-botbase device."""
-        return await self.client("getTitleID")
-
-async def switch_main():
-    """Run the SBBDevice."""
-    device = SBBDevice(str(config['Discord']['switch_host']))
-    title_id = await device.get_title_id()
-    print(title_id)
-
 @bot.event
 async def on_ready():
     logging.info(f'Logged in as {bot.user} (ID: {bot.user.id})')
@@ -142,7 +128,6 @@ async def start(ctx):
 
 @bot.listen()
 async def on_message(message):
-    await switch_main()
     # Ignore messages sent by the bot itself
     if message.author == bot.user:
         return
