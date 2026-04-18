@@ -67,6 +67,51 @@ targets = [
     'pk9'
 ]
 
+versions = {
+    'S':        'Pokémon Sapphire (GBA)',
+    'R':        'Pokémon Ruby (GBA)',    
+    'E':        'Pokémon Emerald (GBA)',  
+    'FR':       'Pokémon FireRed (GBA)',    
+    'LG':       'Pokémon LeafGreen (GBA)',    
+    'CXD':      'Pokémon Colosseum &amp; Pokémon XD (GameCube)',    
+    'D':        'Pokémon Diamond (NDS)',    
+    'P':        'Pokémon Pearl (NDS)',    
+    'Pt':       'Pokémon Platinum (NDS)',
+    'HG':       'Pokémon HeartGold (NDS)',
+    'SS':       'Pokémon SoulSilver (NDS)',
+    'BATREV':   'Pokémon Battle Revolution (Wii)',
+    'W':        'Pokémon White (NDS)',
+    'B':        'Pokémon Black (NDS)',
+    'W2':       'Pokémon White 2 (NDS)',
+    'B2':       'Pokémon Black 2 (NDS)',
+    'X':        'Pokémon X (3DS)',
+    'Y':        'Pokémon Y (3DS)',
+    'AS':       'Pokémon Alpha Sapphire (3DS)',
+    'OR':       'Pokémon Omega Ruby (3DS)',
+    'SN':       'Pokémon Sun (3DS)',
+    'MN':       'Pokémon Moon (3DS)',
+    'US':       'Pokémon Ultra Sun (3DS)',
+    'UM':       'Pokémon Ultra Moon (3DS)',
+    'GO':       'Pokémon GO (GO -> Lets Go/HOME transfers)',
+    'RD':       'Pokémon Red (3DS Virtual Console)',
+    'GN':       'Pokémon Green[JP]/Blue[INT] (3DS Virtual Console)',
+    'BU':       'Pokémon Blue[JP] (3DS Virtual Console)',
+    'YW':       'Pokémon Yellow (3DS Virtual Console)',
+    'GD':       'Pokémon Gold (3DS Virtual Console)',
+    'SI':       'Pokémon Silver (3DS Virtual Console)',
+    'C':        'Pokémon Crystal (3DS Virtual Console)',
+    'GP':       'Pokémon: Lets Go, Pikachu! (NX)',
+    'GE':       'Pokémon: Lets Go, Eevee! (NX)',
+    'SW':       'Pokémon Sword (NX)',
+    'SH':       'Pokémon Shield (NX)',
+    'PLA':      'Pokémon Legends: Arceus (NX)',
+    'BD':       'Pokémon Brilliant Diamond (NX)',
+    'SP':       'Pokémon Shining Pearl (NX)',
+    'SL':       'Pokémon Scarlet (NX)',
+    'VL':       'Pokémon Violet (NX)',
+    'ZA':       'Pokémon Legends: (Z-A) (NX)',
+    'CP':       'Pokémon Champions (NX)'
+}
 
 @bot.event
 async def on_ready():
@@ -138,6 +183,7 @@ async def discord_alert_pokemon(loadfile: str, summary: dict, legality: dict, me
     iv = s['ivs'];  ev = s['evs']
     status = '✅ LEGAL' if legality['valid'] else '❌ ILLEGAL'
     string = (
+        f'{s['version']}\n'
         f'{status}  {loadfile}\n'
         f'Nickname  : {s['nickname']}\n'
         f'OT        : {s['ot']}  TID={s['tid']}  SID={s['sid']}\n'
@@ -222,7 +268,9 @@ def check_legality(pk: PKM) -> dict:
 
 def summarise_pk(ctarget: str, pk: PKM) -> dict:
     '''Extract key fields from a PKM object.'''
+    Version = versions.get(str(pk.Version))
     return {
+        'version':       str(Version),
         'species':       int(pk.Species),
         'species_name':  str(Species(int(pk.Species))),         # e.g. 'Charizard'
         'nickname':      str(pk.Nickname),
