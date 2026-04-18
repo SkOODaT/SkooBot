@@ -58,12 +58,6 @@ from PKHeX.Core import (
     LegalityAnalysis
 )
 
-filetypes = {
-    '**/*.pk*',
-    '**/*.pa*',
-    '**/*.pb*',
-}
-
 targets = [
     'pk7',
     'pb7',
@@ -168,17 +162,17 @@ async def discord_alert_pokemon(loadfile: str, summary: dict, legality: dict, me
                 flag = True
                 info += f'[{ident}] {judgement} {Result}\n'
         if flag == True:
-            console_output(f'\n⚠ **Legality issues:** {loadfile}')
+            console_output(f'\n⚠ Legality issues: {loadfile}')
             console_output(info)
             string += (
-                f'\n\n:warning: Legality Issues:'
+                f'\n\n:warning: **Legality Issues:**'
                 #f'\nLegality  : {legality['valid']}'
                 f'\n{info}'
             )
             discord_colour = discord.Color.red()    
 
     embed = discord.Embed(
-        title = f'\n  :parking:  Pokemon Summery: {loadfile}',
+        title = f'\n  :parking:  **Pokemon Summery:** {loadfile}',
         description = string,
         color = discord_colour
     )
