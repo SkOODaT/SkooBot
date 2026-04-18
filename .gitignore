@@ -1,6 +1,8 @@
 # Directories
-pks/
-downloads/
+/pks
+/downloads
+/aiosbb/__pycache__
 
 # Files
 config.ini
+
